@@ -1,0 +1,8 @@
+<prefab version="0.5.4">
+	<group id_="1311586956" open_="true" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0">
+		<body id_="1724881664" open_="true" tags="pyro_bomb" pos="0.0 0.0 0.0" dynamic="true">
+			<vox id_="628987392" open_="true" tags="pyro_bomb nocull" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0" file="MOD/vox/pyro_bomb.vox"/>
+			<joint id_="556631232" name="attach" pos="0.0 0.0 0.0" size="0.6" rotstrength="1" rotspring="1" collide="false"/>
+		</body>
+	</group>
+</prefab>
