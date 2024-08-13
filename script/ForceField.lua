@@ -3,6 +3,10 @@
 -- This field works on the principle of PV = nRT. Simplifying R=1 and V=1 since 
 -- all simulation is done in equivolume units
 
+FF = {}
+FF.DEBUG_COUNT = 3
+FF.DEBUG_COUNTER = 0
+
 function inst_force_field_ff()
     -- create a force field instance.
     local inst = {}
@@ -100,7 +104,6 @@ function synchronize(ff)
         local point = points[i]
         point.f = math.max(0, math.min(ff.max_f, point.f + (point.trans_f or 0)))
         point.t = math.max(0, math.min(ff.max_t, point.t + (point.trans_t or 0)))
-        DebugPrint(point.f)
         point.trans_f = 0
         point.trans_t = 0
         -- some culling
@@ -175,24 +178,31 @@ end
 function burn_fuel(ff, dt) 
     local points = flatten(ff.field)    
     ff.num_points = #points
+    FF.DEBUG_COUNTER = 0 
     for i = 1, #points do
         local point = points[i]
         update_point_calcs(ff, point) 
         -- as you add more fuel you need higher pressure and temp 
-        if point.p > 0 and point.t > 0 then 
-            local ratio_f_p = point.f / point.p
-            local ratio_f_t = point.f / point.t
-            local efficiency_t = (1 / (1 + math.abs(ratio_f_t - ff.ideal_ratio_f_t))) 
-            -- DebugPrint("ration_f_t: "..tostring(ratio_f_t).."efficientcy_t: "..tostring(efficiency_t)..", fuel: "..tostring(point.f)..", temp: "..tostring(point.t))
-            local efficiency_p = (1 / (1 + math.abs(ratio_f_p - ff.ideal_ratio_f_p))) 
-            local factor = math.min(1, efficiency_t * efficiency_p * ff.burn_rate)
-            local burn_f = point.f * factor
-            point.f = math.max(0, point.f - burn_f)
-            -- consumate thermal rise
-            local burn_t = burn_f * ff.stored_energy
-            point.t = math.max(0, point.t + point.t * factor)
+            if point.p > 0 and point.t > 0 then 
+                local ratio_f_p = point.f / point.p
+                local ratio_f_t = point.f / point.t
+                local efficiency_t = (1 / (1 + math.abs(ratio_f_t - ff.ideal_ratio_f_t))) ^ 2
+                local efficiency_p = (1 / (1 + math.abs(ratio_f_p - ff.ideal_ratio_f_p))) ^ 2
+                if ff.debug and FF.DEBUG_COUNTER < FF.DEBUG_COUNT then
+                    DebugPrint("---------------------------------------------")
+                    DebugPrint("ratio_f_t: "..tostring(ratio_f_t)..", ideal: "..tostring(ff.ideal_ratio_f_t)..", efficientcy_t: "..tostring(efficiency_t)..", fuel: "..tostring(point.f)..", temp: "..tostring(point.t))
+                    DebugPrint("ratio_f_p: "..tostring(ratio_f_p)..", ideal: "..tostring(ff.ideal_ratio_f_p)..", efficientcy_p: "..tostring(efficiency_p)..", fuel: "..tostring(point.f)..", pressure: "..tostring(point.p))
+                    FF.DEBUG_COUNTER = math.min(FF.DEBUG_COUNT, FF.DEBUG_COUNTER + 1)
+                end
+                local factor = math.min(1, efficiency_t * efficiency_p * ff.burn_rate)
+                local burn_f = point.f * factor
+                point.f = math.max(0, point.f - burn_f)
+                -- consumate thermal rise
+                local burn_t = burn_f * ff.stored_energy
+                point.t = math.max(0, point.t + point.t * factor)
         end
     end
+
 end
 
 function propagate_values(ff, dt)

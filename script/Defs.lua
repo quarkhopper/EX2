@@ -57,7 +57,7 @@ CONSTS.SMOKE_LIFE = 1
 CONSTS.SMOKE_AMOUNT = 0 -- 0.1
 
 -- Behavior
-CONSTS.EXPLOSION_F = 10 -- fuel compressed into the bomb
+CONSTS.EXPLOSION_F = 100 -- fuel compressed into the bomb
 CONSTS.EXPLOSION_MAX_F = 10 ^ 10
 CONSTS.EXPLOSION_MAX_T = 10 ^ 10
 CONSTS.EXPLOSION_MAX_P = 10 ^ 10
@@ -67,10 +67,10 @@ CONSTS.AMBIENT_P = 10 ^ 1
 CONSTS.COMBUSTION_T = 200 -- cull the point
 CONSTS.COMBUSTION_F = 1 -- cull the point
 -- these values are linear
-CONSTS.BURN_RATE = 10 ^ -3 -- constant added to the fuel burn calculation
+CONSTS.BURN_RATE = 10 -- constant for the fuel burn calculation
 CONSTS.STORED_ENERGY = 1 -- units of heat per unit of fuel
-CONSTS.IDEAL_RATIO_F_P = 1
-CONSTS.IDEAL_RATIO_F_T = 1
+CONSTS.IDEAL_RATIO_F_T = 5 * 10 ^ -2
+CONSTS.IDEAL_RATIO_F_P = 5 * 10 ^ -3
 CONSTS.HEAT_FACTOR = 10 -- directional vector component due to heat rise
 CONSTS.EXTEND_SAMPLES = 10
 
